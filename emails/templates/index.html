@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>MailMetrics Dashboard</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .navbar { background: #2c3e50; color: white; padding: 1rem 2rem; }
+        .navbar h1 { font-size: 1.5rem; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .stat-card h3 { color: #7f8c8d; font-size: 0.9rem; margin-bottom: 0.5rem; }
+        .stat-card .value { font-size: 2rem; font-weight: bold; color: #2c3e50; }
+        .campaigns { background: white; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .campaigns h2 { margin-bottom: 1rem; }
+        .campaign-item { padding: 1rem; border-bottom: 1px solid #ecf0f1; }
+        .campaign-item:last-child { border-bottom: none; }
+        .btn { display: inline-block; padding: 0.75rem 1.5rem; background: #3498db; color: white; text-decoration: none; border-radius: 4px; margin: 1rem 0; }
+        .btn:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📧 MailMetrics</h1>
+    </div>
+    
+    <div class="container">
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Campaigns</h3>
+                <div class="value">{{ stats.total_campaigns }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Emails Sent</h3>
+                <div class="value">{{ stats.total_emails }}</div>
+            </div>
+            <div class="stat-card">
+                <h3>Open Rate</h3>
+                <div class="value">{{ stats.open_rate }}%</div>
+            </div>
+            <div class="stat-card">
+                <h3>Click Rate</h3>
+                <div class="value">{{ stats.click_rate }}%</div>
+            </div>
+        </div>
+        
+        <div class="campaigns">
+            <h2>Recent Campaigns</h2>
+            <a href="{% url 'create_campaign' %}" class="btn">Create New Campaign</a>
+            <a href="{% url 'campaign_list' %}" class="btn">View All Campaigns</a>
+            
+            {% for campaign in campaigns %}
+            <div class="campaign-item">
+                <h3><a href="{% url 'campaign_detail' campaign.pk %}">{{ campaign.name }}</a></h3>
+                <p>{{ campaign.subject }}</p>
+                <small>Created: {{ campaign.created_at|date:"M d, Y" }}</small>
+            </div>
+            {% empty %}
+            <p>No campaigns yet. Create your first campaign!</p>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

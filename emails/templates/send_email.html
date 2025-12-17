@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Campaign - MailMetrics</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .navbar { background: #2c3e50; color: white; padding: 1rem 2rem; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 0 2rem; }
+        .card { background: white; padding: 2rem; border-radius: 8px; margin-bottom: 1rem; }
+        .form-group { margin-bottom: 1.5rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: bold; }
+        input, textarea { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; }
+        textarea { min-height: 250px; font-family: monospace; }
+        .btn { padding: 0.75rem 1.5rem; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #2980b9; }
+        .btn-secondary { background: #95a5a6; }
+        .btn-secondary:hover { background: #7f8c8d; }
+        .recipients { margin-top: 2rem; }
+        .help-text { font-size: 0.85rem; color: #7f8c8d; margin-top: 0.25rem; }
+        .messages { padding: 1rem; margin-bottom: 1rem; border-radius: 4px; }
+        .messages.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .recipient-form { background: #ecf0f1; padding: 1rem; border-radius: 4px; margin-bottom: 1rem; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📧 MailMetrics</h1>
+    </div>
+    
+    <div class="container">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="messages {{ message.tags }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        
+        <div class="card">
+            <h2>Create New Campaign</h2>
+            
+            <form method="post" action="{% url 'create_campaign' %}">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="name">Campaign Name *</label>
+                    <input type="text" id="name" name="name" required placeholder="e.g., Summer Sale 2024">
+                    <div class="help-text">Give your campaign a memorable name for internal tracking</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="subject">Email Subject *</label>
+                    <input type="text" id="subject" name="subject" required placeholder="e.g., Don't miss our summer deals!">
+                    <div class="help-text">This will be the subject line recipients see in their inbox</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="content">Email Content (HTML) *</label>
+                    <textarea id="content" name="content" required placeholder="Enter your HTML email content here..."><!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+        <h1 style="color: #2c3e50; margin-top: 0;">Hello!</h1>
+        
+        <p>This is your email content. You can customize this HTML to match your brand.</p>
+        
+        <p>Add images, links, and styling as needed.</p>
+        
+        <a href="https://example.com" style="display: inline-block; padding: 12px 24px; background: #3498db; color: white; text-decoration: none; border-radius: 4px; margin: 10px 0;">Click Here</a>
+        
+        <p style="margin-top: 20px; font-size: 0.9rem; color: #7f8c8d;">
+            Best regards,<br>
+            Your Team
+        </p>
+    </div>
+</body>
+</html></textarea>
+                    <div class="help-text">Write your email in HTML. Links and tracking pixels will be automatically added.</div>
+                </div>
+                
+                <button type="submit" class="btn">Create Campaign</button>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+            </form>
+        </div>
+        
+        <div class="card recipients">
+            <h3>Quick Add Recipient</h3>
+            <div class="recipient-form">
+                <form method="post" action="{% url 'add_recipient' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="recipient-name">Name</label>
+                        <input type="text" id="recipient-name" name="name" required placeholder="John Doe">
+                    </div>
+                    <div class="form-group">
+                        <label for="recipient-email">Email</label>
+                        <input type="email" id="recipient-email" name="email" required placeholder="john@example.com">
+                    </div>
+                    <button type="submit" class="btn">Add Recipient</button>
+                </form>
+            </div>
+            
+            <h4>Existing Recipients ({{ recipients.count }})</h4>
+            {% if recipients %}
+            <ul style="list-style: none; padding: 0;">
+                {% for recipient in recipients %}
+                <li style="padding: 0.5rem 0; border-bottom: 1px solid #ecf0f1;">
+                    <strong>{{ recipient.name }}</strong> - {{ recipient.email }}
+                </li>
+                {% endfor %}
+            </ul>
+            {% else %}
+            <p style="color: #7f8c8d;">No recipients yet. Add some above to get started!</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

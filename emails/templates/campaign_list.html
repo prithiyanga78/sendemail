@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Campaigns - MailMetrics</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .navbar { background: #2c3e50; color: white; padding: 1rem 2rem; }
+        .navbar h1 { font-size: 1.5rem; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .campaigns { background: white; padding: 2rem; border-radius: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid #ecf0f1; }
+        th { background: #34495e; color: white; }
+        .btn { display: inline-block; padding: 0.5rem 1rem; background: #3498db; color: white; text-decoration: none; border-radius: 4px; }
+        .btn:hover { background: #2980b9; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📧 MailMetrics</h1>
+    </div>
+    
+    <div class="container">
+        <div class="campaigns">
+            <h2>All Campaigns</h2>
+            <a href="{% url 'dashboard' %}" class="btn">← Back to Dashboard</a>
+            <a href="{% url 'create_campaign' %}" class="btn">Create New</a>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Sent</th>
+                        <th>Opens</th>
+                        <th>Clicks</th>
+                        <th>Open Rate</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in campaigns_data %}
+                    <tr>
+                        <td>{{ item.campaign.name }}</td>
+                        <td>{{ item.stats.total }}</td>
+                        <td>{{ item.stats.opened }}</td>
+                        <td>{{ item.stats.clicked }}</td>
+                        <td>{{ item.stats.open_rate|floatformat:1 }}%</td>
+                        <td><a href="{% url 'campaign_detail' item.campaign.pk %}" class="btn">View</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

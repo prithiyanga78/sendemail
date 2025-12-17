@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ campaign.name }} - MailMetrics</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .navbar { background: #2c3e50; color: white; padding: 1rem 2rem; }
+        .container { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+        .card { background: white; padding: 2rem; border-radius: 8px; margin-bottom: 1rem; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin: 1rem 0; }
+        .stat-item { padding: 1rem; background: #ecf0f1; border-radius: 4px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { padding: 0.75rem; text-align: left; border-bottom: 1px solid #ecf0f1; }
+        th { background: #34495e; color: white; }
+        .badge { padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+        .badge-success { background: #2ecc71; color: white; }
+        .badge-warning { background: #f39c12; color: white; }
+        .badge-danger { background: #e74c3c; color: white; }
+        .btn { display: inline-block; padding: 0.75rem 1.5rem; background: #3498db; color: white; text-decoration: none; border-radius: 4px; margin-right: 0.5rem; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h1>📧 MailMetrics</h1>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <h2>{{ campaign.name }}</h2>
+            <p><strong>Subject:</strong> {{ campaign.subject }}</p>
+            <p><strong>Created:</strong> {{ campaign.created_at|date:"M d, Y H:i" }}</p>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <h3>{{ stats.total }}</h3>
+                    <p>Total Sent</p>
+                </div>
+                <div class="stat-item">
+                    <h3>{{ stats.opened }}</h3>
+                    <p>Opened</p>
+                </div>
+                <div class="stat-item">
+                    <h3>{{ stats.clicked }}</h3>
+                    <p>Clicked</p>
+                </div>
+                <div class="stat-item">
+                    <h3>{{ stats.open_rate|floatformat:1 }}%</h3>
+                    <p>Open Rate</p>
+                </div>
+            </div>
+            
+            <a href="{% url 'campaign_list' %}" class="btn">← Back</a>
+            {% if not campaign.sent_at %}
+            <a href="{% url 'send_campaign' campaign.pk %}" class="btn">Send Campaign</a>
+            {% endif %}
+        </div>
+        
+        <div class="card">
+            <h3>Recipients</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Opened</th>
+                        <th>Clicked</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for email in emails %}
+                    <tr>
+                        <td>{{ email.recipient_email }}</td>
+                        <td>{{ email.recipient_name }}</td>
+                        <td>
+                            {% if email.bounced %}
+                            <span class="badge badge-danger">Bounced</span>
+                            {% elif email.sent %}
+                            <span class="badge badge-success">Sent</span>
+                            {% else %}
+                            <span class="badge badge-warning">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>{% if email.opened %}✓ ({{ email.open_count }}x){% else %}—{% endif %}</td>
+                        <td>{% if email.clicked %}✓ ({{ email.click_count }}x){% else %}—{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
